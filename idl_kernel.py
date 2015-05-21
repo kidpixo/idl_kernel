@@ -42,7 +42,7 @@ class IDLKernel(Kernel):
                 self._banner = ''
 
         return self._banner
-    
+
     language_info = {'name': 'idl',
                      'codemirror_mode': 'idl',
                      'mimetype': 'text/x-idl',
@@ -93,7 +93,7 @@ class IDLKernel(Kernel):
 
         elif code.strip().startswith('.'):
             # This is a IDL Executive command
-            output = self.idlwrapper.run_command(code.strip(), timeout=None) 
+            output = self.idlwrapper.run_command(code.strip(), timeout=None)
 
             if os.path.basename(self._executable) == 'idl':
                 output = '\n'.join(output.splitlines()[1::])+'\n'
@@ -121,23 +121,15 @@ class IDLKernel(Kernel):
                     wset,w_CcjqL6MA[i_KEv8eW6E]
                     ; load color table info
                     tvlct, r_m9QVFuGP,g_jeeyfQkN,b_mufcResT, /get
-                    img_bGr4ea3s = tvrd()
+                    img_bGr4ea3s = tvrd(/TRUE)
                     wdelete
-
                     outfile_c5BXq4dV = '%(plot_dir)s/__fig'+strtrim(i_KEv8eW6E,2)+'.png'
-                    ; Set the colors for each channel
-                    s_m77YL7Gd = size(img_bGr4ea3s)
-                    ii_rsApk4JS=bytarr(3,s_m77YL7Gd[1],s_m77YL7Gd[2])
-                    ii_rsApk4JS[0,*,*]=r_m9QVFuGP[img_bGr4ea3s]
-                    ii_rsApk4JS[1,*,*]=g_jeeyfQkN[img_bGr4ea3s]
-                    ii_rsApk4JS[2,*,*]=b_mufcResT[img_bGr4ea3s]
-
                     ; Write the PNG if the image is not blank
                     if total(img_bGr4ea3s) ne 0 then begin
-                        write_png, outfile_c5BXq4dV, ii_rsApk4JS, r_m9QVFuGP, g_jeeyfQkN, b_mufcResT
+                        write_png, outfile_c5BXq4dV, img_bGr4ea3s
                     endif
                 endfor
-	    endif
+        endif
         end
         """ % locals()
 
@@ -175,10 +167,10 @@ class IDLKernel(Kernel):
         if not silent:
             stream_content = {'name': 'stdout', 'text':output}
             self.send_response(self.iopub_socket, 'stream', stream_content)
-        
+
         if interrupted:
             return {'status': 'abort', 'execution_count': self.execution_count}
-        
+
         try:
             exitcode = int(self.run_command('print,0').rstrip())
         except Exception:
